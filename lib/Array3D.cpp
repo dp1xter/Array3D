@@ -115,18 +115,18 @@ Array2D Array3D::operator[](int32_t index_x) const {
     return {array_3d_, static_cast<size_t> (index_x), second_dimension_size_, third_dimension_size_};
 }
 
-bool operator==(const Array3D& lhs, const Array3D& rhs) {
-    if (lhs.first_dimension_size_ != rhs.first_dimension_size_ || lhs.second_dimension_size_ != rhs.second_dimension_size_ ||
-        lhs.third_dimension_size_ != rhs.third_dimension_size_) {
+bool Array3D::operator==(const Array3D& rhs) const {
+    if (first_dimension_size_ != rhs.first_dimension_size_ || second_dimension_size_ != rhs.second_dimension_size_ ||
+        third_dimension_size_ != rhs.third_dimension_size_) {
         return false;
     }
 
-    const size_t x = lhs.first_dimension_size_;
-    const size_t y = lhs.second_dimension_size_;
-    const size_t z = lhs.third_dimension_size_;
+    const size_t x = first_dimension_size_;
+    const size_t y = second_dimension_size_;
+    const size_t z = third_dimension_size_;
 
     for (int i = 0; i < (x * y * z * kBitSizeNumbers + kBitSizeByte - 1) / kBitSizeByte; ++i) {
-        if (lhs.array_3d_[i] != rhs.array_3d_[i]) {
+        if (array_3d_[i] != rhs.array_3d_[i]) {
             return false;
         }
     }
@@ -134,21 +134,25 @@ bool operator==(const Array3D& lhs, const Array3D& rhs) {
     return true;
 }
 
-Array3D operator+(const Array3D& lhs, const Array3D& rhs) {
-    if (lhs.first_dimension_size_ != rhs.first_dimension_size_ || lhs.second_dimension_size_ != rhs.second_dimension_size_ ||
-        lhs.third_dimension_size_ != rhs.third_dimension_size_) {
+bool Array3D::operator!=(const Array3D& rhs) const {
+    return !(operator==(rhs));
+}
+
+Array3D Array3D::operator+(const Array3D& rhs) const {
+    if (first_dimension_size_ != rhs.first_dimension_size_ || second_dimension_size_ != rhs.second_dimension_size_ ||
+        third_dimension_size_ != rhs.third_dimension_size_) {
         RaiseError("Arrays have different sizes.");
     }
 
-    const size_t x = lhs.first_dimension_size_;
-    const size_t y = lhs.second_dimension_size_;
-    const size_t z = lhs.third_dimension_size_;
+    const size_t x = first_dimension_size_;
+    const size_t y = second_dimension_size_;
+    const size_t z = third_dimension_size_;
 
     Array3D result = Array3D(static_cast<int32_t> (x), static_cast<int32_t> (y), static_cast<int32_t> (z));
     for (int i = 0; i < x; ++i) {
         for (int j = 0; j < y; ++j) {
             for (int k = 0; k < z; ++k) {
-                result[i][j][k] = static_cast<uint32_t> (lhs[i][j][k]) + static_cast<uint32_t> (rhs[i][j][k]);
+                result[i][j][k] = static_cast<uint32_t> ((*this)[i][j][k]) + static_cast<uint32_t> (rhs[i][j][k]);
             }
         }
     }
@@ -156,21 +160,21 @@ Array3D operator+(const Array3D& lhs, const Array3D& rhs) {
     return result;
 }
 
-Array3D operator-(const Array3D& lhs, const Array3D& rhs) {
-    if (lhs.first_dimension_size_ != rhs.first_dimension_size_ || lhs.second_dimension_size_ != rhs.second_dimension_size_ ||
-        lhs.third_dimension_size_ != rhs.third_dimension_size_) {
+Array3D Array3D::operator-(const Array3D& rhs) const {
+    if (first_dimension_size_ != rhs.first_dimension_size_ || second_dimension_size_ != rhs.second_dimension_size_ ||
+        third_dimension_size_ != rhs.third_dimension_size_) {
         RaiseError("Arrays have different sizes.");
     }
 
-    const size_t x = lhs.first_dimension_size_;
-    const size_t y = lhs.second_dimension_size_;
-    const size_t z = lhs.third_dimension_size_;
+    const size_t x = first_dimension_size_;
+    const size_t y = second_dimension_size_;
+    const size_t z = third_dimension_size_;
 
     Array3D result = Array3D(static_cast<int32_t> (x), static_cast<int32_t> (y), static_cast<int32_t> (z));
     for (int i = 0; i < x; ++i) {
         for (int j = 0; j < y; ++j) {
             for (int k = 0; k < z; ++k) {
-                result[i][j][k] = static_cast<uint32_t> (lhs[i][j][k]) - static_cast<uint32_t> (rhs[i][j][k]);
+                result[i][j][k] = static_cast<uint32_t> ((*this)[i][j][k]) - static_cast<uint32_t> (rhs[i][j][k]);
             }
         }
     }
@@ -178,16 +182,16 @@ Array3D operator-(const Array3D& lhs, const Array3D& rhs) {
     return result;
 }
 
-Array3D operator*(const Array3D& array, uint32_t multiple) {
-    const size_t x = array.first_dimension_size_;
-    const size_t y = array.second_dimension_size_;
-    const size_t z = array.third_dimension_size_;
+Array3D Array3D::operator*(uint32_t multiple) const {
+    const size_t x = first_dimension_size_;
+    const size_t y = second_dimension_size_;
+    const size_t z = third_dimension_size_;
 
     Array3D result = Array3D(static_cast<int32_t> (x), static_cast<int32_t> (y), static_cast<int32_t> (z));
     for (int i = 0; i < x; ++i) {
         for (int j = 0; j < y; ++j) {
             for (int k = 0; k < z; ++k) {
-                result[i][j][k] = static_cast<uint32_t> (array[i][j][k]) * multiple;
+                result[i][j][k] = static_cast<uint32_t> ((*this)[i][j][k]) * multiple;
             }
         }
     }
@@ -206,9 +210,9 @@ Array3D& Array3D::operator=(const Array3D& rhs) {
 
     delete[] array_3d_;
 
-    array_3d_ = new uint8_t[(first_dimension_size_ * second_dimension_size_ * third_dimension_size_ * 17 + 7) / 8];
+    array_3d_ = new uint8_t[(first_dimension_size_ * second_dimension_size_ * third_dimension_size_ * kBitSizeNumbers + kBitSizeByte - 1) / kBitSizeByte];
 
-    for (int i = 0; i < (first_dimension_size_ * second_dimension_size_ * third_dimension_size_ * 17 + 7) / 8; ++i) {
+    for (int i = 0; i < (first_dimension_size_ * second_dimension_size_ * third_dimension_size_ * kBitSizeNumbers + kBitSizeByte - 1) / kBitSizeByte; ++i) {
         array_3d_[i] = rhs.array_3d_[i];
     }
 

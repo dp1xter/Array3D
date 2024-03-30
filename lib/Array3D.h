@@ -81,13 +81,15 @@ public:
 
     Array2D operator[](int32_t index_x) const;
 
-    friend bool operator==(const Array3D& lhs, const Array3D& rhs);
+    bool operator==(const Array3D& rhs) const;
 
-    friend Array3D operator+(const Array3D& lhs, const Array3D& rhs);
+    bool operator!=(const Array3D& rhs) const;
 
-    friend Array3D operator-(const Array3D& lhs, const Array3D& rhs);
+    Array3D operator+(const Array3D& rhs) const;
 
-    friend Array3D operator*(const Array3D& array, uint32_t multiple);
+    Array3D operator-(const Array3D& rhs) const;
+
+    Array3D operator*(uint32_t multiple) const;
 
     Array3D& operator=(const Array3D& rhs);
 
