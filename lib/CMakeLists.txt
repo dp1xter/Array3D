@@ -1,0 +1,1 @@
+add_library(array3d Array3D.h Array3D.cpp)
