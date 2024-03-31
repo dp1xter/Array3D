@@ -346,6 +346,8 @@ TEST(AdditionOperatorTestSuite, Test_2) {
 }
 
 TEST(AdditionOperatorTestSuite, Test_3) {
+    srand((unsigned)time(nullptr));
+    
     Array3D array_1 = Array3D(100, 63, 71);
     Array3D array_2 = Array3D(100, 63, 71);
 
